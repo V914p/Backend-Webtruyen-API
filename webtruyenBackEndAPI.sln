@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webtruyenBackEndAPI", "webtruyenBackEndAPI.csproj", "{602EB1A6-CC35-4987-BC95-6C749E4D8B8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{602EB1A6-CC35-4987-BC95-6C749E4D8B8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{602EB1A6-CC35-4987-BC95-6C749E4D8B8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{602EB1A6-CC35-4987-BC95-6C749E4D8B8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{602EB1A6-CC35-4987-BC95-6C749E4D8B8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C44CF527-A28F-4637-A630-3B42A1D33A9D}
+	EndGlobalSection
+EndGlobal
