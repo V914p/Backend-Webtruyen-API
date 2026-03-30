@@ -51,26 +51,33 @@ public class ComicController {
         return ResponseEntity.ok(comics);
     }
 
-    @GetMapping({"/{comicId}"})
+    @GetMapping("/{comicId}")
     public ResponseEntity<ComicDetailDTO> getComicDetail(@PathVariable String comicId) {
-        Optional<Comic> comicOpt = this.comicRepository.findById(comicId);
+
+        Optional<Comic> comicOpt = comicRepository.findActiveComicById(comicId);
+
         if (comicOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
-        } else {
-            Comic comic = (Comic)comicOpt.get();
-            List<ChapterDTO> chapters = this.chapterRepository.findChapterDTOByComicId(comicId);
-            ComicDetailDTO dto = new ComicDetailDTO();
-            dto.setComicId(comic.getComicId());
-            dto.setName(comic.getName());
-            dto.setSlug(comic.getSlug());
-            dto.setOriginName(comic.getOriginName());
-            dto.setStatus(comic.getStatus());
-            dto.setThumbUrl(comic.getThumbUrl());
-            dto.setChaptersLatest(comic.getChaptersLatest());
-            dto.setUpdatedAt(comic.getUpdatedAt());
-            dto.setChapters(chapters);
-            return ResponseEntity.ok(dto);
         }
+
+        Comic comic = comicOpt.get();
+
+        List<ChapterDTO> chapters =
+                chapterRepository.findChapterDTOByComicId(comicId);
+
+        ComicDetailDTO dto = new ComicDetailDTO();
+        dto.setComicId(comic.getComicId());
+        dto.setName(comic.getName());
+        dto.setSlug(comic.getSlug());
+        dto.setOriginName(comic.getOriginName());
+        dto.setStatus(comic.getStatus());
+        dto.setThumbUrl(comic.getThumbUrl());
+        dto.setChaptersLatest(comic.getChaptersLatest());
+        dto.setUpdatedAt(comic.getUpdatedAt());
+        dto.setChapters(chapters);
+
+        return ResponseEntity.ok(dto);
+
     }
 
     @GetMapping({"/Genre/{genreId}"})

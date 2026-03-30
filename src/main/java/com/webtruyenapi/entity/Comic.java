@@ -1,5 +1,6 @@
 package com.webtruyenapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Comic {
     @Id
     @Column(name = "comic_id", length = 36)
@@ -30,7 +32,8 @@ public class Comic {
     private String originName;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ComicStatus status;
 
     @Column(name = "thumb_url", columnDefinition = "TEXT")
     private String thumbUrl;
@@ -59,7 +62,7 @@ public class Comic {
 
     @OneToMany(mappedBy = "comic", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<ComicFollow> comicFollows = new ArrayList<>();
+    private List<ComicFollow> comicFollows;
 
     @PrePersist
     protected void onCreate() {

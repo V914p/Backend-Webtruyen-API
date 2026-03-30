@@ -63,6 +63,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
 
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // ===== SWAGGER =====
@@ -92,15 +94,19 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
 
                         // ===== FOLLOW / PROFILE NEED LOGIN =====
-                        .requestMatchers("/api/Follows/**").authenticated()
+                        .requestMatchers("/api/follows/**").authenticated()
                         .requestMatchers("/api/Auth/profile").authenticated()
                         .requestMatchers("/api/Auth/upload-avatar").authenticated()
+                        // ===== COMMENT ========
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/comments/**"
+                        ).permitAll()
 
                         // ===== EVERYTHING ELSE =====
                         .anyRequest().authenticated()
                 );
-//                .addFilterBefore(jwtAuthenticationFilter,
-//                        UsernamePasswordAuthenticationFilter.class);
+                http.addFilterBefore(jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

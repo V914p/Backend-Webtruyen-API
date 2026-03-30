@@ -94,7 +94,7 @@ public class ComicCrawlerService {
                     comic.setName(detail.getName());
                     comic.setSlug(detail.getSlug());
                     comic.setOriginName(originName);
-                    comic.setStatus(detail.getStatus());
+                    //comic.setStatus(detail.getStatus());
                     comic.setThumbUrl(thumbUrl);
                     comic.setSubDocquyen(detail.isSubDocQuyen());
                     comic.setUpdatedAt(LocalDateTime.now());

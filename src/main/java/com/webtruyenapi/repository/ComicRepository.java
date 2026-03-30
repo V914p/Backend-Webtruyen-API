@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface ComicRepository extends JpaRepository<Comic, String> {
-    Page<Comic> findAllByOrderByUpdatedAtDesc(Pageable pageable);
+    Page<Comic> findByStatusInOrderByUpdatedAtDesc(List<String> status, Pageable pageable);
 
     @Query("SELECT c FROM Comic c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Comic> searchByName(@Param("keyword") String keyword);
@@ -32,6 +32,7 @@ SELECT new com.webtruyenapi.dto.ComicSummaryDTO(
     c.updatedAt
 )
 FROM Comic c
+WHERE LOWER(TRIM(c.status)) IN ('ongoing','completed')
 ORDER BY c.updatedAt DESC
 """)
     Page<ComicSummaryDTO> findComicPage(Pageable pageable);
@@ -46,6 +47,7 @@ SELECT new com.webtruyenapi.dto.ComicSummaryDTO(
 )
 FROM Comic c
 WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+AND LOWER(TRIM(c.status)) IN ('ongoing','completed')
 ORDER BY c.updatedAt DESC
 """)
     List<ComicSummaryDTO> searchComic(@Param("keyword") String keyword);
@@ -61,8 +63,20 @@ SELECT new com.webtruyenapi.dto.ComicSummaryDTO(
 FROM Comic c
 JOIN c.comicGenres cg
 WHERE cg.genre.genreId = :genreId
+AND LOWER(TRIM(c.status)) IN ('ongoing','completed')
 ORDER BY c.updatedAt DESC
 """)
     List<ComicSummaryDTO> findComicByGenre(@Param("genreId") String genreId);
+    Page<Comic> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Optional<Comic> findByComicIdAndStatusIn(String comicId, List<String> status);
+
+    @Query("""
+SELECT c
+FROM Comic c
+WHERE c.comicId = :comicId
+AND LOWER(TRIM(c.status)) IN ('ongoing','completed')
+""")
+    Optional<Comic> findActiveComicById(@Param("comicId") String comicId);
 
 }

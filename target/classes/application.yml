@@ -20,8 +20,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: giapvu10624@gmail.com
-    password: pqfw fjkf stqg ihtd
+    username: Your_Email
+    password: Your_Email_Password
     properties:
       mail:
         smtp:
@@ -36,7 +36,7 @@ spring:
       max-request-size: 10MB
 
 server:
-  port: 7821
+  port: 8080
 
 jwt:
   key: ThisIsASecretKeyForJwtToken123456
@@ -45,7 +45,7 @@ jwt:
 
 google:
   auth:
-    clientId: 143396378619-fcl4ru4cq14lmr5us7scv8p6m478fi75.apps.googleusercontent.com
+    clientId: Your_Google_Client_ID
 
 logging:
   level:

@@ -7,6 +7,7 @@ import com.webtruyenapi.repository.AccountRepository;
 import com.webtruyenapi.repository.PasswordResetTokenRepository;
 import com.webtruyenapi.service.AuthService;
 import com.webtruyenapi.service.EmailService;
+import com.webtruyenapi.service.GoogleAuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/Auth")
@@ -28,13 +26,16 @@ public class AuthController {
     private final AuthService authService;
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final GoogleAuthService googleAuthService;
 
     public AuthController(AccountRepository accountRepository, AuthService authService, 
-                        EmailService emailService, PasswordResetTokenRepository passwordResetTokenRepository) {
+                        EmailService emailService, PasswordResetTokenRepository passwordResetTokenRepository,
+                          GoogleAuthService googleAuthService) {
         this.accountRepository = accountRepository;
         this.authService = authService;
         this.emailService = emailService;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.googleAuthService = googleAuthService;
     }
 
     @PostMapping("/register")
@@ -82,6 +83,9 @@ public class AuthController {
 
         Account account = accountOpt.get();
         String token = authService.generateJwtToken(account);
+
+        account.setCurrentToken(token);
+        accountRepository.save(account);
 
         AccountInfo accountInfo = new AccountInfo(
                 account.getAccountId(),
@@ -174,5 +178,68 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(accountInfo);
+    }
+    @PostMapping("/google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleAuthRequest req) {
+
+        var payload = googleAuthService.verifyToken(req.getToken());
+
+        if (payload == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Google token không hợp lệ"));
+        }
+
+        String email = payload.getEmail();
+        String name = (String) payload.get("name");
+        String picture = (String) payload.get("picture");
+
+        Optional<Account> accountOpt = accountRepository.findByMail(email);
+
+        Account account;
+
+        // ======================
+        // EMAIL CHƯA TỒN TẠI
+        // AUTO REGISTER
+        // ======================
+
+        if (accountOpt.isEmpty()) {
+
+            account = new Account();
+            account.setMail(email);
+            account.setUserName(name);
+            account.setImage(picture);
+            account.setPassword(UUID.randomUUID().toString());
+            account.setPosition(false);
+
+            account = accountRepository.save(account);
+
+            log.info("Auto registered Google account: {}", email);
+
+        } else {
+
+            // ======================
+            // EMAIL ĐÃ TỒN TẠI
+            // LOGIN
+            // ======================
+
+            account = accountOpt.get();
+        }
+
+        String jwt = authService.generateJwtToken(account);
+
+        String token = authService.generateJwtToken(account);
+
+        account.setCurrentToken(token);
+        accountRepository.save(account);
+
+        AccountInfo accountInfo = new AccountInfo(
+                account.getAccountId(),
+                account.getUserName(),
+                account.getMail(),
+                account.getImage(),
+                account.getPosition()
+        );
+
+        return ResponseEntity.ok(new LoginResponse(jwt, accountInfo));
     }
 }

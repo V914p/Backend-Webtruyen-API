@@ -1,5 +1,6 @@
 package com.webtruyenapi.dto;
 
+import com.webtruyenapi.entity.ComicStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class ComicDetailDTO {
     private String name;
     private String slug;
     private String originName;
-    private String status;
+    private ComicStatus status;
     private String thumbUrl;
     private String chaptersLatest;
     private LocalDateTime updatedAt;
